@@ -1,5 +1,9 @@
 package com.zp.recruit.controller;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -51,8 +55,9 @@ public class WorkPlaceController extends BaseController{
 	 */
 	@RequestMapping(value = "deleteWorkPlaceById" , method = RequestMethod.POST)
 	@ResponseBody
-	public Object deleteWorkPlaceById(Integer wid) {
-		boolean bool = iTb_work_placeService.deleteById(wid);
+	public Object deleteWorkPlaceById(Integer[] wid) {
+		List<Integer> stringB = Arrays.asList(wid);
+		boolean bool = iTb_work_placeService.deleteBatchIds(stringB);
 		return false != bool ? 
 				renderSuccess("删除成功") : renderError("删除失败");
 	}
@@ -65,6 +70,7 @@ public class WorkPlaceController extends BaseController{
 	@RequestMapping(value = "insertOrUpdateWorkPlace" , method = RequestMethod.POST)
 	@ResponseBody
 	public Object insertOrUpdateWorkPlace(Tb_work_place tb_work_place) {
+		tb_work_place.setW_time(new Date());
 		boolean bool = iTb_work_placeService.insertOrUpdate(tb_work_place);
 		return false != bool ?
 				renderSuccess("成功") : renderError("失败");

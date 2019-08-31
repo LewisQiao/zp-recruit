@@ -1,5 +1,8 @@
 package com.zp.recruit.controller;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -63,8 +66,9 @@ public class RecruitTypeController extends BaseController{
 	 */
 	@RequestMapping(value = "deleteRecruitById", method = RequestMethod.POST)
 	@ResponseBody
-	public Object deleteRecruitById(Integer rid) {
-		boolean bool = iTb_recruit_typeService.deleteById(rid);
+	public Object deleteRecruitById(Integer[] rid) {
+		List<Integer> stringB = Arrays.asList(rid);
+		boolean bool = iTb_recruit_typeService.deleteBatchIds(stringB);
 		return false != bool ? 
 				renderSuccess("删除成功") : renderError("删除失败");
 	}

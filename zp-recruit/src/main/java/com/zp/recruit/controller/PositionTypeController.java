@@ -1,5 +1,9 @@
 package com.zp.recruit.controller;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,9 +55,24 @@ public class PositionTypeController extends BaseController{
 	@RequestMapping(value = "insertOrUpdatePositionType" ,method = RequestMethod.POST)
 	@ResponseBody
 	public Object insertOrUpdatePositionType(Tb_position_type tb_position_type) {
+		tb_position_type.setPt_time(new Date());
 		boolean bool = iTb_position_typeService.insertOrUpdate(tb_position_type);
 		return false != bool ? 
 				renderSuccess("成功") : renderError("失败");
+	}
+	
+	/***
+	 * 根据ID 删除职位类型
+	 * @param ptid
+	 * @return
+	 */
+	@RequestMapping(value = "deletePositionTypeById" ,method = RequestMethod.POST)
+	@ResponseBody
+	public Object deletePositionTypeById(Integer[] ptid) {
+		List<Integer> stringB = Arrays.asList(ptid);
+		boolean bool = iTb_position_typeService.deleteBatchIds(stringB);
+		return false != bool ? 
+				renderSuccess("删除成功") : renderError("删除失败");
 	}
 
 }

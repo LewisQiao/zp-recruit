@@ -1,5 +1,9 @@
 package com.zp.recruit.controller;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,12 +38,13 @@ public class AdminController extends BaseController {
 	@RequestMapping(value = "adminLogin",method=RequestMethod.POST)
 	@ResponseBody
 	public Object adminLogin(Tb_manager tb_manager) {
-		if("" != tb_manager.getM_username() && "" != tb_manager.getM_password() ) {
+		if(null != tb_manager.getM_username() && null != tb_manager.getM_password() ) {
 			Wrapper<Tb_manager> wrapper = new EntityWrapper<Tb_manager>();
 			wrapper.where("m_username='" + tb_manager.getM_username() + "'").and("m_password='" + MD5Util.getMD5(tb_manager.getM_password()) + "'");
 			Tb_manager tmObject = iTb_managerService.selectOne(wrapper);
 			if(null != tmObject) {
 				Tb_manager model = new Tb_manager();
+				model.setM_login_time(new Date());
 				model.setM_id(tmObject.getM_id());
 				if(tmObject.getM_login_count() != null) {
 					model.setM_login_count(tmObject.getM_login_count()+1);
@@ -94,8 +99,9 @@ public class AdminController extends BaseController {
 	 */
 	@RequestMapping(value = "deleteAdminById",method=RequestMethod.POST)
 	@ResponseBody
-	public Object deleteAdminById(Integer mid) {
-		boolean bool = iTb_managerService.deleteById(mid);
+	public Object deleteAdminById(Integer[] mid) {
+		List<Integer> stringB = Arrays.asList(mid);
+		boolean bool = iTb_managerService.deleteBatchIds(stringB);
 		return false != bool ? 
 				renderSuccess("删除成功") : renderError("删除失败");
 	}
