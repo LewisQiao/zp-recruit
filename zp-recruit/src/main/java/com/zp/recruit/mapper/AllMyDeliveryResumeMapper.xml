@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zp.recruit.mapper.AllMyDeliveryResumeMapper">
+
+    <!-- 开启二级缓存 -->
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+    
+    <select id="getDeliveryResumeByIdOrList" resultType="com.zp.recruit.entity.AllMyDeliveryResume"> 
+    	SELECT
+			tb_delivery_resume.*,
+			tb_resume.*,
+			tb_position.*
+		FROM
+			tb_delivery_resume ,
+			tb_resume ,
+			tb_position
+		WHERE
+			tb_delivery_resume.m_id = tb_resume.r_id 
+		AND
+			tb_delivery_resume.p_id = tb_position.p_id 
+		
+			<if test="u_id != null and u_id != ''">
+				AND	tb_delivery_resume.u_id = #{u_id}
+			</if>
+			<if test="p_state != null and p_state != ''">
+				AND tb_delivery_resume.d_state = #{d_state}
+			</if>
+    
+    </select>
+</mapper>
