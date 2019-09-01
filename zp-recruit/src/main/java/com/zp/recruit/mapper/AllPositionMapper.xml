@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zp.recruit.mapper.AllPositionMapper">
+
+    <!-- 开启二级缓存 -->
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+    
+    <select id="selectAllPositionList" resultType="com.zp.recruit.entity.AllPosition"> 
+	    SELECT
+			tb_position.*,
+			tb_position_type.*,
+			tb_work_place.*
+		FROM
+			tb_position ,
+			tb_position_type ,
+			tb_work_place
+		WHERE
+			tb_position.pt_id = tb_position_type.pt_id AND
+			tb_position.w_id = tb_work_place.w_id	
+			<if test="p_state != null and p_state != ''">
+				AND tb_position.p_state = #{p_state}
+			</if>
+			<if test="p_id != null and p_id != ''">
+				AND tb_position.p_id = #{p_id}
+			</if>
+    
+    </select>
+
+</mapper>
