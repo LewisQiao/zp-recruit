@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.zp.recruit.entity.Tb_user;
 import com.zp.recruit.service.ITb_userService;
 
@@ -52,6 +53,27 @@ public class UserController extends BaseController{
 		boolean bool = iTb_userService.updateById(tb_user);
 		return false != bool ?
 				renderSuccess("修改成功") : renderError("修改失败");
+	}
+	
+	/***
+	 * 查询所有用户
+	 * @param size
+	 * @param current
+	 * @return
+	 */
+	@RequestMapping(value = "getUserList" , method = RequestMethod.POST)
+	@ResponseBody
+	public Object getUserList(Integer size, Integer current) {
+		if (size == null) {
+			size = 7;
+		}
+		if (current == null) {
+			current = 1;
+		}
+		Page<Tb_user> pageo = new Page<Tb_user>(current, size);
+		Page<Tb_user> page = iTb_userService.selectPage(pageo);
+		return page.getSize() > 0 ? 
+				renderSuccess(page) : renderError("暂无数据");
 	}
 
 }
