@@ -22,7 +22,7 @@
 			<if test="u_id != null and u_id != ''">
 				AND	tb_delivery_resume.u_id = #{u_id}
 			</if>
-			<if test="p_state != null and p_state != ''">
+			<if test="d_state != null and d_state != ''">
 				AND tb_delivery_resume.d_state = #{d_state}
 			</if>
     

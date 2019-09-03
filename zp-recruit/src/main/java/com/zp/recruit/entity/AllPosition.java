@@ -62,8 +62,17 @@ public class AllPosition extends Model<AllPosition> {
      * 状态1使用，0不使用
      */
     private Integer pt_state;
-    
     /**
+     * 职位图片
+     */
+	private String p_url;
+    public String getP_url() {
+		return p_url;
+	}
+	public void setP_url(String p_url) {
+		this.p_url = p_url;
+	}
+	/**
      * 名称
      */
     private String w_name;
@@ -160,14 +169,13 @@ public class AllPosition extends Model<AllPosition> {
 	public void setW_state(Integer w_state) {
 		this.w_state = w_state;
 	}
-	
-	
+	 
 	@Override
 	public String toString() {
 		return "AllPosition [p_id=" + p_id + ", p_name=" + p_name + ", p_moneg=" + p_moneg + ", pt_id=" + pt_id
 				+ ", w_id=" + w_id + ", p_position_describe=" + p_position_describe + ", p_time=" + p_time
 				+ ", p_state=" + p_state + ", pt_name=" + pt_name + ", pt_time=" + pt_time + ", pt_state=" + pt_state
-				+ ", w_name=" + w_name + ", w_time=" + w_time + ", w_state=" + w_state + "]";
+				+ ", p_url=" + p_url + ", w_name=" + w_name + ", w_time=" + w_time + ", w_state=" + w_state + "]";
 	}
 	@Override
 	protected Serializable pkVal() {
