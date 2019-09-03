@@ -10,8 +10,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.velocity.shaded.commons.io.FilenameUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.objenesis.instantiator.sun.MagicInstantiator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,30 +28,35 @@ import com.zp.recruit.service.ITb_positionService;
 
 /***
  * 职位管理
+ * 
  * @author Administrator
  *
  */
 @Controller
 @RequestMapping("/position/")
 @CrossOrigin
-public class PositionController extends BaseController{
-	
+public class PositionController extends BaseController {
+
 	@Autowired
 	private ITb_positionService iTb_positionService;
 	@Autowired
 	private IAllPositionService iAllPositionService;
-	
+
 	/***
 	 * 查询职位
+	 * 
 	 * @param size
 	 * @param current
-	 * @param p_state 传入1查询启动的，传入0查询停用的，不传查询所有
-	 * @param p_id  不传查所有，传入可根据ID 查询
+	 * @param p_state
+	 *            传入1查询启动的，传入0查询停用的，不传查询所有
+	 * @param p_id
+	 *            不传查所有，传入可根据ID 查询
 	 * @return
 	 */
-	@RequestMapping(value = "selectAllPositionList",method = RequestMethod.POST)
+	@RequestMapping(value = "selectAllPositionList", method = RequestMethod.POST)
 	@ResponseBody
-	public Object selectAllPositionList(Integer size, Integer current,Integer p_state,Integer p_id) {
+	public Object selectAllPositionList(Integer size, Integer current,
+			Integer p_state, Integer p_id) {
 		if (size == null) {
 			size = 10;
 		}
@@ -58,43 +64,45 @@ public class PositionController extends BaseController{
 			current = 1;
 		}
 		Page<AllPosition> page = new Page<AllPosition>(current, size);
-		Page<AllPosition> listPage = iAllPositionService.selectAllPositionList(page,p_state,p_id);
-		return listPage.getSize() > 0 ? 
-				renderSuccess(listPage) : renderError("暂无数据");
-	
+		Page<AllPosition> listPage = iAllPositionService
+				.selectAllPositionList(page, p_state, p_id);
+		return listPage.getSize() > 0
+				? renderSuccess(listPage)
+				: renderError("暂无数据");
+
 	}
-	
+
 	/***
-	 * 添加职位
-	 * 修改职位
+	 * 添加职位 修改职位
+	 * 
 	 * @param tb_position
 	 * @return
 	 */
-	@RequestMapping(value = "insertOrUpdateByObject",method = RequestMethod.POST)
+	@RequestMapping(value = "insertOrUpdateByObject", method = RequestMethod.POST)
 	@ResponseBody
 	public Object insertOrUpdateByObject(Tb_position tb_position) {
 		tb_position.setP_time(new Date());
 		boolean bool = iTb_positionService.insertOrUpdate(tb_position);
-		return false != bool ? 
-				renderSuccess("成功") : renderError("失败");
+		return false != bool ? renderSuccess("成功") : renderError("失败");
 	}
-	
+
 	/***
 	 * 删除职位 传入p_id
+	 * 
 	 * @param p_id
 	 * @return
 	 */
-	@RequestMapping(value = "deleteTbpositionById",method = RequestMethod.POST)
+	@RequestMapping(value = "deleteTbpositionById", method = RequestMethod.POST)
 	@ResponseBody
 	public Object deleteTbpositionById(Integer[] p_id) {
 		List<Integer> stringB = Arrays.asList(p_id);
 		boolean bool = iTb_positionService.deleteBatchIds(stringB);
-		return false != bool ? 
-				renderSuccess("删除成功") : renderError("删除失败");
+		return false != bool ? renderSuccess("删除成功") : renderError("删除失败");
 	}
-	
+
 	/***
 	 * 上传职位logo
+	 * 
 	 * @param fileFieName
 	 * @param request
 	 * @param response
@@ -104,13 +112,13 @@ public class PositionController extends BaseController{
 	 */
 	@RequestMapping(value = "replaceLBTImage", method = RequestMethod.POST)
 	@ResponseBody
-	public Object replaceLBTImage(MultipartFile fileFieName,
+	public Object replaceLBTImage(MultipartFile logofile,
 			HttpServletRequest request, HttpServletResponse response)
 			throws IllegalStateException, IOException {
- 
+
 		try {
 			// 获取图片原始文件名
-			String originalFilename = fileFieName.getOriginalFilename();
+			String originalFilename = logofile.getOriginalFilename();
 			System.out.println(originalFilename);
 
 			// 文件名使用当前时间
@@ -122,30 +130,27 @@ public class PositionController extends BaseController{
 
 			// 图片上传的相对路径（因为相对路径放到页面上就可以显示图片）
 			String requestUrl = request.getScheme() // 当前链接使用的协议
-					+ "://"
-					+ request.getServerName()// 服务器地址
-					+ ":"
-					+ request.getServerPort() // 端口号
-					+ request.getContextPath() + "/upload/" + name
-					+ "."
+					+ "://" + request.getServerName()// 服务器地址
+					+ ":" + request.getServerPort() // 端口号
+					+ request.getContextPath() + "/upload/" + name + "."
 					+ extension;
 			// 图片上传的绝对路径
 			String url = request.getSession().getServletContext()
-					.getRealPath("")
-					+ "/upload/" + name + "." + extension;
+					.getRealPath("") + "/upload/" + name + "." + extension;
 
-			File dir = new File(url);
-			if (!dir.exists()) {
-				dir.mkdirs();
+			File destFile = new File(url);
+			if (!destFile.getParentFile().exists()) {
+				destFile.getParentFile().mkdirs();
 			}
-
 			// 上传图片
-			fileFieName.transferTo(new File(url));
- 
+			logofile.transferTo(destFile);
+
 			return renderSuccess(requestUrl);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException("服务器繁忙，上传图片失败");
 		}
+
 	}
 
 }
