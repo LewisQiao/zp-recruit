@@ -1,15 +1,23 @@
 package com.zp.recruit.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.velocity.shaded.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.zp.recruit.entity.AllPosition;
@@ -83,6 +91,61 @@ public class PositionController extends BaseController{
 		boolean bool = iTb_positionService.deleteBatchIds(stringB);
 		return false != bool ? 
 				renderSuccess("删除成功") : renderError("删除失败");
+	}
+	
+	/***
+	 * 上传职位logo
+	 * @param fileFieName
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws IllegalStateException
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "replaceLBTImage", method = RequestMethod.POST)
+	@ResponseBody
+	public Object replaceLBTImage(MultipartFile fileFieName,
+			HttpServletRequest request, HttpServletResponse response)
+			throws IllegalStateException, IOException {
+ 
+		try {
+			// 获取图片原始文件名
+			String originalFilename = fileFieName.getOriginalFilename();
+			System.out.println(originalFilename);
+
+			// 文件名使用当前时间
+			String name = new SimpleDateFormat("yyyyMMddHHmmssSSS")
+					.format(new Date());
+
+			// 获取上传图片的扩展名(jpg/png/...)
+			String extension = FilenameUtils.getExtension(originalFilename);
+
+			// 图片上传的相对路径（因为相对路径放到页面上就可以显示图片）
+			String requestUrl = request.getScheme() // 当前链接使用的协议
+					+ "://"
+					+ request.getServerName()// 服务器地址
+					+ ":"
+					+ request.getServerPort() // 端口号
+					+ request.getContextPath() + "/upload/" + name
+					+ "."
+					+ extension;
+			// 图片上传的绝对路径
+			String url = request.getSession().getServletContext()
+					.getRealPath("")
+					+ "/upload/" + name + "." + extension;
+
+			File dir = new File(url);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+
+			// 上传图片
+			fileFieName.transferTo(new File(url));
+ 
+			return renderSuccess(requestUrl);
+		} catch (Exception e) {
+			throw new RuntimeException("服务器繁忙，上传图片失败");
+		}
 	}
 
 }
