@@ -12,11 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.objenesis.instantiator.sun.MagicInstantiator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -112,7 +112,8 @@ public class PositionController extends BaseController {
 	 */
 	@RequestMapping(value = "replaceLBTImage", method = RequestMethod.POST)
 	@ResponseBody
-	public Object replaceLBTImage(MultipartFile logofile,
+	public Object replaceLBTImage(
+			@RequestParam("logofile") MultipartFile logofile,
 			HttpServletRequest request, HttpServletResponse response)
 			throws IllegalStateException, IOException {
 
@@ -139,8 +140,8 @@ public class PositionController extends BaseController {
 					.getRealPath("") + "/upload/" + name + "." + extension;
 
 			File destFile = new File(url);
-			if (!destFile.getParentFile().exists()) {
-				destFile.getParentFile().mkdirs();
+			if (!destFile.exists()) {
+				destFile.mkdirs();
 			}
 			// 上传图片
 			logofile.transferTo(destFile);
@@ -150,7 +151,6 @@ public class PositionController extends BaseController {
 			e.printStackTrace();
 			throw new RuntimeException("服务器繁忙，上传图片失败");
 		}
-
 	}
 
 }
