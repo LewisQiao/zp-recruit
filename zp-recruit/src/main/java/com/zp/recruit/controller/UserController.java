@@ -56,7 +56,7 @@ public class UserController extends BaseController{
 	}
 	
 	/***
-	 * 查询所有用户
+	 * 
 	 * @param size
 	 * @param current
 	 * @return

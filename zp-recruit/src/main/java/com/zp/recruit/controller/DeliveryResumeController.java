@@ -46,18 +46,21 @@ public class DeliveryResumeController extends BaseController{
 				renderSuccess("成功") : renderError("失败");
 	}
 	
-	/****
-	 * 
-	 * 查询投递记录
-	 * @param size
-	 * @param current
-	 * @param u_id 传入时 查个人投递记录  不传查所有
-	 * @param d_state  管理端用 不传查所有，传入1查看状态被查看，传入2，查看邀请面试
-	 * @return
-	 */
+	 /****
+	  *  查询投递记录
+	  * @param u_id 传入时 查个人投递记录  不传查所有
+	  * @param d_state  管理端用 不传查所有，传入1查看状态被查看，传入2，查看邀请面试
+	  * @param size
+	  * @param current
+	  * @param p_name   职位名称
+	  * @param pt_id    职位类型ID
+	  * @param w_id     职位地点ID
+	  * @param m_myphone  用户电话
+	  * @return
+	  */
 	@RequestMapping(value = "getDeliveryResumeByIdOrList",method = RequestMethod.POST)
 	@ResponseBody
-	public Object getDeliveryResumeByIdOrList(Integer size, Integer current,Integer u_id, Integer d_state) {
+	public Object getDeliveryResumeByIdOrList(Integer size, Integer current,Integer u_id, Integer d_state,String p_name,Integer pt_id,Integer w_id,String m_myphone) {
 		if (size == null) {
 			size = 7;
 		}
@@ -70,6 +73,5 @@ public class DeliveryResumeController extends BaseController{
 		return listAllMyDeliveryResumes.getSize() > 0 ? 
 				renderSuccess(listAllMyDeliveryResumes) : renderError("暂无数据");
 	}
-	
 	
 }

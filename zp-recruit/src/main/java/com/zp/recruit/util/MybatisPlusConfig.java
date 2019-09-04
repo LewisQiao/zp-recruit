@@ -1,20 +1,23 @@
 package com.zp.recruit.util;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 import com.baomidou.mybatisplus.plugins.PaginationInterceptor;
 
-@Component
+
+@Configuration
 public class MybatisPlusConfig {
 	
 	
 	/**
-     * 分页插件
+     *   mybatis-plus分页插件
      */
     @Bean
     public PaginationInterceptor paginationInterceptor() {
-        return new PaginationInterceptor();
+        PaginationInterceptor page = new PaginationInterceptor();
+        page.setDialectType("mysql");
+        return page;
     }
 
 }

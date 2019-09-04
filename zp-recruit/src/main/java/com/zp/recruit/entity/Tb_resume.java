@@ -13,7 +13,7 @@ import com.baomidou.mybatisplus.enums.IdType;
  * </p>
  *
  * @author Tz
- * @since 2019-08-28
+ * @since 2019-09-02
  */
 public class Tb_resume extends Model<Tb_resume> {
 
@@ -33,6 +33,10 @@ public class Tb_resume extends Model<Tb_resume> {
      * 1.男。0女
      */
 	private Integer r_sex;
+    /**
+     * 我的电话
+     */
+	private Integer m_myphone;
     /**
      * 经验时长
      */
@@ -57,6 +61,9 @@ public class Tb_resume extends Model<Tb_resume> {
      * 教育经历（毕业学校）
      */
 	private String r_high_school;
+    /**
+     * 用户ID
+     */
 	private Integer u_id;
 
 
@@ -90,6 +97,14 @@ public class Tb_resume extends Model<Tb_resume> {
 
 	public void setR_sex(Integer r_sex) {
 		this.r_sex = r_sex;
+	}
+
+	public Integer getM_myphone() {
+		return m_myphone;
+	}
+
+	public void setM_myphone(Integer m_myphone) {
+		this.m_myphone = m_myphone;
 	}
 
 	public BigDecimal getR_experience_duration() {
@@ -160,6 +175,7 @@ public class Tb_resume extends Model<Tb_resume> {
 			", r_name=" + r_name +
 			", r_age=" + r_age +
 			", r_sex=" + r_sex +
+			", m_myphone=" + m_myphone +
 			", r_experience_duration=" + r_experience_duration +
 			", r_education=" + r_education +
 			", r_self_evaluation=" + r_self_evaluation +

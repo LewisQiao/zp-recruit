@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.zp.recruit.entity.Tb_position_type;
 import com.zp.recruit.service.ITb_position_typeService;
@@ -34,17 +36,27 @@ public class PositionTypeController extends BaseController{
 	 */
 	@RequestMapping(value = "selectPositionTypeByPage" ,method = RequestMethod.POST)
 	@ResponseBody
-	public Object selectPositionTypeByPage(Integer size,Integer current) {
+	public Object selectPositionTypeByPage(Integer size,Integer current,Integer state) {
 		if (size == null) {
 			size = 7;
 		} 
 		if (current == null) {
 			current = 1;
 		}
-		Page<Tb_position_type> page = new Page<>(current,size);
-		Page<Tb_position_type> pageListPage = iTb_position_typeService.selectPage(page);
-		return pageListPage.getSize() > 0 ? 
-				renderSuccess(pageListPage) : renderError("暂无数据");
+		if(state == null) {
+			Page<Tb_position_type> page = new Page<>(current,size);
+			Page<Tb_position_type> pageListPage = iTb_position_typeService.selectPage(page);
+			return pageListPage.getSize() > 0 ? 
+					renderSuccess(pageListPage) : renderError("暂无数据");
+		}
+		else {
+			Page<Tb_position_type> page = new Page<>(current,size);
+			Wrapper<Tb_position_type> wrapper = new EntityWrapper<Tb_position_type>();
+			wrapper.where("pt_state=1");
+			Page<Tb_position_type> pageListPage = iTb_position_typeService.selectPage(page,wrapper);
+			return pageListPage.getSize() > 0 ? 
+					renderSuccess(pageListPage) : renderError("暂无数据");
+		}
 	}
 	
 	/***

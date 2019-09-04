@@ -10,13 +10,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FilenameUtils;
+import org.apache.velocity.shaded.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,8 +54,7 @@ public class PositionController extends BaseController {
 	 */
 	@RequestMapping(value = "selectAllPositionList", method = RequestMethod.POST)
 	@ResponseBody
-	public Object selectAllPositionList(Integer size, Integer current,
-			Integer p_state, Integer p_id) {
+	public Object selectAllPositionList(Integer size, Integer current, Integer p_state, Integer p_id) {
 		if (size == null) {
 			size = 10;
 		}
@@ -64,11 +62,8 @@ public class PositionController extends BaseController {
 			current = 1;
 		}
 		Page<AllPosition> page = new Page<AllPosition>(current, size);
-		Page<AllPosition> listPage = iAllPositionService
-				.selectAllPositionList(page, p_state, p_id);
-		return listPage.getSize() > 0
-				? renderSuccess(listPage)
-				: renderError("暂无数据");
+		Page<AllPosition> listPage = iAllPositionService.selectAllPositionList(page, p_state, p_id);
+		return listPage.getSize() > 0 ? renderSuccess(listPage) : renderError("暂无数据");
 
 	}
 
@@ -112,9 +107,7 @@ public class PositionController extends BaseController {
 	 */
 	@RequestMapping(value = "replaceLBTImage", method = RequestMethod.POST)
 	@ResponseBody
-	public Object replaceLBTImage(
-			@RequestParam("logofile") MultipartFile logofile,
-			HttpServletRequest request, HttpServletResponse response)
+	public Object replaceLBTImage(MultipartFile logofile, HttpServletRequest request, HttpServletResponse response)
 			throws IllegalStateException, IOException {
 
 		try {
@@ -123,8 +116,7 @@ public class PositionController extends BaseController {
 			System.out.println(originalFilename);
 
 			// 文件名使用当前时间
-			String name = new SimpleDateFormat("yyyyMMddHHmmssSSS")
-					.format(new Date());
+			String name = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
 
 			// 获取上传图片的扩展名(jpg/png/...)
 			String extension = FilenameUtils.getExtension(originalFilename);
@@ -133,18 +125,17 @@ public class PositionController extends BaseController {
 			String requestUrl = request.getScheme() // 当前链接使用的协议
 					+ "://" + request.getServerName()// 服务器地址
 					+ ":" + request.getServerPort() // 端口号
-					+ request.getContextPath() + "/upload/" + name + "."
-					+ extension;
+					+ request.getContextPath() + "/upload/" + name + "." + extension;
+			
 			// 图片上传的绝对路径
-			String url = request.getSession().getServletContext()
-					.getRealPath("") + "/upload/" + name + "." + extension;
+			String url = request.getSession().getServletContext().getRealPath("") + "/upload/" + name + "." + extension;
 
-			File destFile = new File(url);
-			if (!destFile.exists()) {
-				destFile.mkdirs();
+			File dir = new File(url);
+			if (!dir.exists()) {
+				dir.mkdirs();
 			}
 			// 上传图片
-			logofile.transferTo(destFile);
+			logofile.transferTo(dir);
 
 			return renderSuccess(requestUrl);
 		} catch (Exception e) {

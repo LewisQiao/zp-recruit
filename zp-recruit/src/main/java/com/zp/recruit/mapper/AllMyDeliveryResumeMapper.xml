@@ -6,18 +6,24 @@
     <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
     
     <select id="getDeliveryResumeByIdOrList" resultType="com.zp.recruit.entity.AllMyDeliveryResume"> 
-    	SELECT
-			tb_delivery_resume.*,
-			tb_resume.*,
-			tb_position.*
-		FROM
-			tb_delivery_resume ,
-			tb_resume ,
-			tb_position
-		WHERE
-			tb_delivery_resume.m_id = tb_resume.r_id 
-		AND
-			tb_delivery_resume.p_id = tb_position.p_id 
+	    	SELECT
+				tb_delivery_resume.*,
+				tb_resume.*,
+				tb_position.*,
+				tb_position_type.*,
+				tb_work_place.*
+			FROM
+				tb_delivery_resume ,
+				tb_resume ,
+				tb_position ,
+				tb_position_type ,
+				tb_work_place
+			WHERE
+				tb_delivery_resume.m_id = tb_resume.r_id AND
+				tb_delivery_resume.p_id = tb_position.p_id AND
+				tb_position.pt_id = tb_position_type.pt_id AND
+				tb_position.w_id = tb_work_place.w_id
+
 		
 			<if test="u_id != null and u_id != ''">
 				AND	tb_delivery_resume.u_id = #{u_id}
