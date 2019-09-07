@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.zp.recruit.entity.AllMyDeliveryResume;
 import com.zp.recruit.entity.Tb_delivery_resume;
+import com.zp.recruit.entity.Tb_resume;
 import com.zp.recruit.service.IAllMyDeliveryResumeService;
 import com.zp.recruit.service.ITb_delivery_resumeService;
+import com.zp.recruit.service.ITb_resumeService;
 
 /**
  * 投递简历
@@ -31,6 +33,9 @@ public class DeliveryResumeController extends BaseController{
 	@Autowired
 	private IAllMyDeliveryResumeService iAllMyDeliveryResumeService;
 	
+	@Autowired
+	private ITb_resumeService iTb_resumeService;
+	
 	/****
 	 * 用户投递简历
 	 * 投递时传入：用户ID u_id，微简历ID m_id，职位ID p_id,
@@ -39,11 +44,18 @@ public class DeliveryResumeController extends BaseController{
 	 */
 	@RequestMapping(value = "userDeliveryResume",method = RequestMethod.POST)
 	@ResponseBody
-	public Object userDeliveryResume(Tb_delivery_resume Tb_delivery_resume) {
-		Tb_delivery_resume.setD_time(new Date());
-		boolean bool = iTb_delivery_resumeService.insertOrUpdate(Tb_delivery_resume);
-		return false != bool ? 
-				renderSuccess("成功") : renderError("失败");
+	public Object userDeliveryResume(Tb_delivery_resume tb_delivery_resume) {
+		Tb_resume tb_resume = iTb_resumeService.selectById(tb_delivery_resume.getU_id());
+		if(tb_resume != null) {
+			tb_delivery_resume.setM_id(tb_resume.getR_id());
+			tb_delivery_resume.setD_time(new Date());
+			boolean bool = iTb_delivery_resumeService.insertOrUpdate(tb_delivery_resume);
+			return false != bool ? 
+					renderSuccess("成功") : renderError("失败");
+		}else {
+			return renderError("没有微简历");
+		}
+	
 	}
 	
 	 /****
@@ -67,9 +79,15 @@ public class DeliveryResumeController extends BaseController{
 		if (current == null) {
 			current = 1;
 		}
+		if(p_name != null && p_name != ""){
+			p_name="%"+p_name+"%";
+		}
+		if(m_myphone != null && m_myphone != ""){
+			m_myphone="%"+m_myphone+"%";
+		}
 		Page<AllMyDeliveryResume> pageo = new Page<AllMyDeliveryResume>(current, size);
 		Page<AllMyDeliveryResume> listAllMyDeliveryResumes = 
-				iAllMyDeliveryResumeService.getDeliveryResumeByIdOrList(pageo,u_id,d_state);
+				iAllMyDeliveryResumeService.getDeliveryResumeByIdOrList(pageo,u_id,d_state,p_name,m_myphone);
 		return listAllMyDeliveryResumes.getSize() > 0 ? 
 				renderSuccess(listAllMyDeliveryResumes) : renderError("暂无数据");
 	}

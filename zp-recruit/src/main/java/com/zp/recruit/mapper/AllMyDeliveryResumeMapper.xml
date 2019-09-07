@@ -31,6 +31,12 @@
 			<if test="d_state != null and d_state != ''">
 				AND tb_delivery_resume.d_state = #{d_state}
 			</if>
+			<if test="m_myphone != null and m_myphone != ''">
+				AND tb_work_place.w_name Like #{m_myphone}
+			</if>
+			<if test="p_name != null and p_name != ''">
+				AND tb_position.p_name Like #{p_name}
+			</if>
     
     </select>
 </mapper>

@@ -25,8 +25,8 @@ public class LoginjournalServiceImpl extends ServiceImpl<LoginjournalMapper, Log
 	private LoginjournalMapper loginjournalMapper;
 	
 	@Override
-	public List<Loginjournal> getLoginjournal() {
-		List<Loginjournal> loginjournal = loginjournalMapper.getLoginjournal();
+	public List<Loginjournal> getLoginjournal(String starttime,String endtime) {
+		List<Loginjournal> loginjournal = loginjournalMapper.getLoginjournal(starttime,endtime);
 		return loginjournal;
 	}
 

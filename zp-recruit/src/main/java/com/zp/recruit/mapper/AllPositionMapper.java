@@ -18,6 +18,6 @@ import com.zp.recruit.entity.AllPosition;
  */
 public interface AllPositionMapper extends BaseMapper<AllPosition> {
 
-	List<AllPosition> selectAllPositionList(Pagination page, @Param("p_state")Integer p_state,@Param("p_id")Integer p_id);
+	List<AllPosition> selectAllPositionList(Pagination page, @Param("p_state")Integer p_state,@Param("p_id")Integer p_id, @Param("w_id")Integer w_id, @Param("p_name")String p_name);
 
 }

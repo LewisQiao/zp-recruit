@@ -54,15 +54,18 @@ public class PositionController extends BaseController {
 	 */
 	@RequestMapping(value = "selectAllPositionList", method = RequestMethod.POST)
 	@ResponseBody
-	public Object selectAllPositionList(Integer size, Integer current, Integer p_state, Integer p_id) {
+	public Object selectAllPositionList(Integer size, Integer current, Integer p_state, Integer p_id,Integer w_id,String p_name) {
 		if (size == null) {
 			size = 10;
 		}
 		if (current == null) {
 			current = 1;
 		}
+		if(p_name != null && p_name != ""){
+			p_name="%"+p_name+"%";
+		}
 		Page<AllPosition> page = new Page<AllPosition>(current, size);
-		Page<AllPosition> listPage = iAllPositionService.selectAllPositionList(page, p_state, p_id);
+		Page<AllPosition> listPage = iAllPositionService.selectAllPositionList(page, p_state, p_id,w_id,p_name);
 		return listPage.getSize() > 0 ? renderSuccess(listPage) : renderError("暂无数据");
 
 	}

@@ -14,6 +14,6 @@ import com.zp.recruit.entity.AllPosition;
  */
 public interface IAllPositionService extends IService<AllPosition> {
 
-	Page<AllPosition> selectAllPositionList(Page<AllPosition> page, Integer p_state,Integer p_id);
+	Page<AllPosition> selectAllPositionList(Page<AllPosition> page, Integer p_state,Integer p_id, Integer w_id, String p_name);
 
 }

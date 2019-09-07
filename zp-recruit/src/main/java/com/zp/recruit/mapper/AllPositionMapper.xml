@@ -23,7 +23,12 @@
 			<if test="p_id != null and p_id != ''">
 				AND tb_position.p_id = #{p_id}
 			</if>
-    
+    		<if test="w_id != null and w_id != ''">
+				AND tb_position.w_id = #{w_id}
+			</if>
+			<if test="p_name != null and p_name != ''">
+				AND tb_position.p_name LIKE #{p_name}
+			</if>
     </select>
 
 </mapper>

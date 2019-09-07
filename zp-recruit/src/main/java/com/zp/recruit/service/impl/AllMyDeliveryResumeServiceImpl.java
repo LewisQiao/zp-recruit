@@ -24,8 +24,8 @@ public class AllMyDeliveryResumeServiceImpl extends ServiceImpl<AllMyDeliveryRes
 	private AllMyDeliveryResumeMapper allMyDeliveryResumeMapper;
 	
 	@Override
-	public Page<AllMyDeliveryResume> getDeliveryResumeByIdOrList(Page<AllMyDeliveryResume> pageo,Integer u_id, Integer d_state) {
-		pageo.setRecords(allMyDeliveryResumeMapper.getDeliveryResumeByIdOrList(pageo,u_id,d_state));
+	public Page<AllMyDeliveryResume> getDeliveryResumeByIdOrList(Page<AllMyDeliveryResume> pageo,Integer u_id, Integer d_state,String p_name,String m_myphone) {
+		pageo.setRecords(allMyDeliveryResumeMapper.getDeliveryResumeByIdOrList(pageo,u_id,d_state,p_name,m_myphone));
 		return pageo;
 	}
 

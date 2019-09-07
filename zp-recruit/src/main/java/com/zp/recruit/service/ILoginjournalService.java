@@ -15,6 +15,6 @@ import com.zp.recruit.entity.Loginjournal;
  */
 public interface ILoginjournalService extends IService<Loginjournal> {
 
-	List<Loginjournal> getLoginjournal();
+	List<Loginjournal> getLoginjournal(String starttime, String endtime);
 
 }

@@ -24,8 +24,8 @@ public class AllPositionServiceImpl extends ServiceImpl<AllPositionMapper, AllPo
 	private AllPositionMapper allPositionMapper;
 	
 	@Override
-	public Page<AllPosition> selectAllPositionList(Page<AllPosition> page, Integer p_state,Integer p_id) {
-		page.setRecords(allPositionMapper.selectAllPositionList(page,p_state,p_id));
+	public Page<AllPosition> selectAllPositionList(Page<AllPosition> page, Integer p_state,Integer p_id,Integer w_id, String p_name) {
+		page.setRecords(allPositionMapper.selectAllPositionList(page,p_state,p_id,w_id,p_name));
 		return page;
 	}
 

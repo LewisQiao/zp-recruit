@@ -13,6 +13,8 @@
 			sum(lj_logintime) lj_logintime
 		FROM
 			tb_login_journal
+		WHERE
+			lj_logintime BETWEEN #{starttime} and #{endtime} 
 		GROUP BY
 			time
 	</select>

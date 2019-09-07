@@ -15,7 +15,7 @@ import com.zp.recruit.entity.AllMyDeliveryResume;
 public interface IAllMyDeliveryResumeService extends IService<AllMyDeliveryResume> {
 	
 	
-	Page<AllMyDeliveryResume> getDeliveryResumeByIdOrList(Page<AllMyDeliveryResume> pageo,Integer u_id, Integer d_state);
+	Page<AllMyDeliveryResume> getDeliveryResumeByIdOrList(Page<AllMyDeliveryResume> pageo,Integer u_id, Integer d_state, String p_name, String m_myphone);
 
 }
 	

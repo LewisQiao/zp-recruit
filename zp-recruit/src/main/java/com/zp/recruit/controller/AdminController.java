@@ -69,8 +69,8 @@ public class AdminController extends BaseController {
 				} else {
 					model.setM_login_count(1);
 				}
-				iTb_managerService.updateById(model);
-				return renderSuccess("登录成功");
+				boolean bool = iTb_managerService.updateById(model);
+				return false != bool ? renderSuccess(tmObject) : renderError("登录失败");
 			}
 			return renderError("用户名或密码不正确");
 		}
@@ -109,6 +109,32 @@ public class AdminController extends BaseController {
 		boolean bool = iTb_managerService.insertOrUpdate(tb_manager);
 		return false != bool ? renderSuccess("成功") : renderError("失败");
 	}
+	
+	/***
+	 * 修改密码
+	 * @param tb_manager
+	 * @param upass
+	 * @return
+	 */
+	@RequestMapping(value = "updateAdminById", method = RequestMethod.POST)
+	@ResponseBody
+	public Object updateAdminById(Tb_manager tb_manager,String upass) {
+		if(tb_manager.getM_username() != null && tb_manager.getM_password() != null) {
+			Tb_manager tbm = iTb_managerService.selectById(tb_manager.getM_id());
+			if(tbm.getM_password().equals(MD5Util.getMD5(tb_manager.getM_password()))) {
+				Tb_manager obj = new Tb_manager();
+				obj.setM_username(tb_manager.getM_username());
+				obj.setM_password(MD5Util.getMD5(upass));
+				obj.setM_id(tb_manager.getM_id());
+				boolean bool = iTb_managerService.updateById(obj);
+				return false != bool ? 
+						renderSuccess("修改成功") : renderError("修改失败");
+			}else {
+				return renderError("旧密码错误");
+			}
+		}
+		return renderError("账户和密码不能为空");
+	}
 
 	/***
 	 * 根据ID 删除管理员
@@ -125,43 +151,105 @@ public class AdminController extends BaseController {
 	}
 
 	@RequestMapping("/toOpenId")
-	 @ResponseBody
-     public Map<String, Object> getOpenId(String code,String echostr,HttpServletResponse res) throws IOException{
-		
-         if(echostr==null){
-             String url="https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appid+"&secret="+secret+"&code="+code+"&grant_type=authorization_code";
-             System.out.println(code);
-             Map<String, Object> map = new HashMap<String, Object>();
-             try {
-                 URL getUrl=new URL(url);
-                 HttpURLConnection http=(HttpURLConnection)getUrl.openConnection();
-                 http.setRequestMethod("GET"); 
-                 http.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
-                 http.setDoOutput(true);
-                 http.setDoInput(true);
-     
-     
-                 http.connect();
-                 InputStream is = http.getInputStream(); 
-                 int size = is.available(); 
-                 byte[] b = new byte[size];
-                 is.read(b);
-     
-     
-                 String message = new String(b, "UTF-8");
-     
-                 JSONObject json = JSONObject.parseObject(message);
-                 map.put("openId", json.getString("openid"));
-                 } catch (MalformedURLException e) {
-                     e.printStackTrace();
-                 } catch (IOException e) {
-                     e.printStackTrace();
-                 }
-             return map;
-         }else{
-             PrintWriter out = res.getWriter();
-             out.print(echostr);
-             return null;
-         }
-     }
+	@ResponseBody
+	public Map<String, Object> getOpenId(String code, String echostr, HttpServletResponse res) throws IOException {
+
+		if (echostr == null) {
+			String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appid+"&secret="+secret+"&code="+code+"&grant_type=authorization_code";
+			System.out.println(code);
+			Map<String, Object> map = null;
+			try {
+				URL getUrl = new URL(url);
+				HttpURLConnection http = (HttpURLConnection) getUrl.openConnection();
+				http.setRequestMethod("GET");
+				http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+				http.setDoOutput(true);
+				http.setDoInput(true);
+
+				http.connect();
+				InputStream is = http.getInputStream();
+				int size = is.available();
+				byte[] b = new byte[size];
+				is.read(b);
+
+				String message = new String(b, "UTF-8");
+
+				JSONObject json = JSONObject.parseObject(message);
+				System.out.println("heheh"+json);
+				String openid = json.getString("openid");
+				String access_token = getUser(res);
+				map = getUserOpenid(res,access_token,openid);
+				//map = getUser(res,access_token);
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return map;
+		} else {
+			PrintWriter out = res.getWriter();
+			out.print(echostr);
+			return null;
+		}
+	}
+
+	public String getUser(HttpServletResponse res) {
+		String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+appid+"&secret="+secret;
+		String access_token = null;
+		try {
+			URL getUrl = new URL(url);
+			HttpURLConnection http = (HttpURLConnection) getUrl.openConnection();
+			http.setRequestMethod("GET");
+			http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			http.setDoOutput(true);
+			http.setDoInput(true);
+
+			http.connect();
+			InputStream is = http.getInputStream();
+			int size = is.available();
+			byte[] b = new byte[size];
+			is.read(b);
+
+			String message = new String(b, "UTF-8");
+
+			JSONObject json = JSONObject.parseObject(message);
+			System.out.println("hahah"+json);
+			access_token = json.getString("access_token");
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return access_token;
+	}
+	
+	public Map<String, Object> getUserOpenid(HttpServletResponse res,String access_token,String openid) {
+		String url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token="+access_token+"&openid="+openid+"&lang=zh_CN";
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			URL getUrl = new URL(url);
+			HttpURLConnection http = (HttpURLConnection) getUrl.openConnection();
+			http.setRequestMethod("GET");
+			http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			http.setDoOutput(true);
+			http.setDoInput(true);
+
+			http.connect();
+			InputStream is = http.getInputStream();
+			int size = is.available();
+			byte[] b = new byte[size];
+			is.read(b);
+
+			String message = new String(b, "UTF-8");
+
+			JSONObject json = JSONObject.parseObject(message);
+			System.out.println("用户信息"+json);
+			map.put("user", json);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
 }
